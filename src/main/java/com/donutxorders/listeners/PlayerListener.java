@@ -81,3 +81,5 @@ public class PlayerListener implements Listener {
         synchronized (playerDataCache) {
             return playerDataCache.get(uuid);
         }
+    }
+}

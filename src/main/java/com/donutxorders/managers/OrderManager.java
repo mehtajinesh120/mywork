@@ -190,4 +190,5 @@ public class OrderManager {
         // for (Order order : expired) { ... }
     }
 
-    // Additional utility methods as
+    // Additional utility methods as needed
+}

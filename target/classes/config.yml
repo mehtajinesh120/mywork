@@ -1,0 +1,161 @@
+################################################################################
+# DonutxOrders - Main Configuration File
+# For documentation and updates, see: https://github.com/mehtajinesh120/mywork
+################################################################################
+
+# =========================
+# Database Configuration
+# =========================
+database:
+  # Type: "sqlite" or "mysql"
+  type: "sqlite"
+  sqlite:
+    file: "plugins/DonutxOrders/orders.db"
+  mysql:
+    host: "localhost"
+    port: 3306
+    database: "donutxorders"
+    username: "root"
+    password: "password"
+    useSSL: false
+    pool-size: 10
+
+# =========================
+# Order Expiration & Cleanup
+# =========================
+order-expiration-minutes: 1440 # Orders expire after 24 hours (in minutes)
+database-cleanup-retention-days: 30 # Remove completed/expired orders older than 30 days
+
+# =========================
+# Discord Webhook Integration
+# =========================
+discord:
+  enabled: false
+  webhook-url: "https://discord.com/api/webhooks/your_webhook_url"
+  order-created-message: "**New Order!**\nPlayer: {player}\nOrder ID: {order_id}\nItems: {items}\nTotal: {total_price}"
+  order-expired-message: "**Order Expired**\nPlayer: {player}\nOrder ID: {order_id}"
+
+# =========================
+# Economy & Vault Integration
+# =========================
+economy:
+  enabled: true
+  currency-symbol: "$"
+  min-order-price: 10.0
+  max-order-price: 10000.0
+  refund-on-expire: true
+
+# =========================
+# Permission Settings
+# =========================
+permissions:
+  default-max-orders: 3
+  groups:
+    vip:
+      max-orders: 5
+    elite:
+      max-orders: 10
+    staff:
+      max-orders: 100
+
+# =========================
+# GUI Settings
+# =========================
+gui:
+  main-title: "<gradient:#ffb347:#ffcc33>Donutx Orders</gradient>"
+  your-orders-title: "<#6dd5ed>Your Orders</#2193b0>"
+  new-order-title: "<#f7971e>New Order</#ffd200>"
+  delivery-title: "<#43cea2>Delivery</#185a9d>"
+  search-title: "<#f953c6>Search Orders</#b91d73>"
+  item-selection-title: "<#f7971e>Select Item</#ffd200>"
+  # GUI item settings
+  items:
+    next-page:
+      material: "ARROW"
+      name: "<#43e97b>Next Page"
+      lore:
+        - "&7Click to go to the next page."
+    previous-page:
+      material: "ARROW"
+      name: "<#38f9d7>Previous Page"
+      lore:
+        - "&7Click to go to the previous page."
+    close:
+      material: "BARRIER"
+      name: "<#ff5e62>Close"
+      lore:
+        - "&7Click to close the menu."
+    order-item:
+      material: "PAPER"
+      name: "<#f7971e>Order #{order_id}"
+      lore:
+        - "&7Status: {status}"
+        - "&7Total: {total_price}"
+        - "&7Expires: {expires_in}"
+    empty-slot:
+      material: "GRAY_STAINED_GLASS_PANE"
+      name: " "
+      lore: []
+
+# =========================
+# Sound Settings
+# =========================
+sounds:
+  gui-open: "BLOCK_CHEST_OPEN"
+  gui-close: "BLOCK_CHEST_CLOSE"
+  order-created: "ENTITY_PLAYER_LEVELUP"
+  order-expired: "ENTITY_VILLAGER_NO"
+  order-delivered: "ENTITY_ITEM_PICKUP"
+  error: "ENTITY_VILLAGER_NO"
+
+# =========================
+# Color & Message Formatting
+# =========================
+colors:
+  primary: "<#ffb347>"
+  secondary: "<#ffcc33>"
+  success: "<#43e97b>"
+  error: "<#ff5e62>"
+  info: "<#6dd5ed>"
+  gradient-example: "<gradient:#ffb347:#ffcc33>Gradient Example</gradient>"
+
+# =========================
+# Messages
+# =========================
+messages:
+  prefix: "<#ffb347>[DonutxOrders]</#ffcc33> "
+  no-permission: "{prefix}<#ff5e62>You do not have permission to do that."
+  order-created: "{prefix}<#43e97b>Your order has been created! &7(Order ID: {order_id})"
+  order-expired: "{prefix}<#ff5e62>Your order &e#{order_id} &chas expired. {refund_message}"
+  order-delivered: "{prefix}<#43e97b>Your order &e#{order_id} &ahas been delivered!"
+  order-not-found: "{prefix}<#ff5e62>Order not found."
+  max-orders-reached: "{prefix}<#ff5e62>You have reached your maximum number of active orders."
+  invalid-amount: "{prefix}<#ff5e62>Invalid amount specified."
+  not-enough-money: "{prefix}<#ff5e62>You do not have enough money to place this order."
+  refund-success: "{prefix}<#43e97b>You have been refunded &e{amount}&a!"
+  refund-failed: "{prefix}<#ff5e62>Refund failed. Please contact staff."
+  gui-title-main: "<gradient:#ffb347:#ffcc33>Donutx Orders</gradient>"
+  gui-title-your-orders: "<#6dd5ed>Your Orders</#2193b0>"
+  gui-title-new-order: "<#f7971e>New Order</#ffd200>"
+  gui-title-delivery: "<#43cea2>Delivery</#185a9d>"
+  gui-title-search: "<#f953c6>Search Orders</#b91d73>"
+  gui-title-item-selection: "<#f7971e>Select Item</#ffd200>"
+  # Placeholders: {player}, {order_id}, {total_price}, {status}, {expires_in}, {amount}, {prefix}
+
+# =========================
+# Placeholders & Formatting
+# =========================
+placeholders:
+  player: "Player's name"
+  order_id: "Order ID"
+  total_price: "Order total price"
+  status: "Order status"
+  expires_in: "Time until expiration"
+  amount: "Amount of currency"
+  prefix: "Message prefix"
+
+################################################################################
+# Notes:
+# - Use <#hexcode> for hex colors, <gradient:#start:#end> for gradients.
+# - Placeholders in curly braces {} will be replaced dynamically.
+# - For more info, see the plugin wiki or GitHub

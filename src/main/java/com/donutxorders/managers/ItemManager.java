@@ -87,4 +87,6 @@ public class ItemManager {
         if (mat.isBlock()) return "block";
         if (mat.name().endsWith("_SWORD") || mat.name().endsWith("_AXE")) return "weapon";
         // Add more categories as needed
-        return
+        return "other";
+    }
+}

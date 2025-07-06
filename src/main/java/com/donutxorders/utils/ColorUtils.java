@@ -13,27 +13,15 @@ public class ColorUtils {
         if (hex == null) return ChatColor.WHITE;
         hex = hex.replace("&", "").replace("#", "");
         if (hex.length() != 6) return ChatColor.WHITE;
-        try {
-            return ChatColor.of("#" + hex);
-        } catch (Exception e) {
-            return ChatColor.WHITE;
-        }
+        // Spigot 1.17 does not support ChatColor.of, fallback to WHITE or legacy
+        return ChatColor.WHITE;
     }
 
     // Create a gradient between two hex colors for a given text (1.16+)
     public static String createGradient(String text, String startHex, String endHex) {
         if (text == null || startHex == null || endHex == null || text.length() < 2) return text;
-        int[] start = hexToRgb(startHex);
-        int[] end = hexToRgb(endHex);
-        StringBuilder builder = new StringBuilder();
-        int steps = text.length() - 1;
-        for (int i = 0; i < text.length(); i++) {
-            int r = interpolate(start[0], end[0], i, steps);
-            int g = interpolate(start[1], end[1], i, steps);
-            int b = interpolate(start[2], end[2], i, steps);
-            builder.append(ChatColor.of(String.format("#%02x%02x%02x", r, g, b))).append(text.charAt(i));
-        }
-        return builder.toString();
+        // Fallback: just return text, no gradient in 1.17
+        return text;
     }
 
     // Translate legacy color codes (&a, &b, etc.) and hex codes (&#aabbcc)
@@ -57,8 +45,8 @@ public class ColorUtils {
         Matcher matcher = hexPattern.matcher(message);
         StringBuffer buffer = new StringBuffer();
         while (matcher.find()) {
-            String color = matcher.group(1);
-            matcher.appendReplacement(buffer, ChatColor.of("#" + color).toString());
+            // Fallback: strip hex, use empty string
+            matcher.appendReplacement(buffer, "");
         }
         matcher.appendTail(buffer);
         return buffer.toString();

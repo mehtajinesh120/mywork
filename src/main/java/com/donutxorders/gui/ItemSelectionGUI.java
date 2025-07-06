@@ -184,3 +184,5 @@ public class ItemSelectionGUI {
         String category = "all";
         String search = "";
         List<ItemStack> filteredItems = new ArrayList<>();
+    }
+}

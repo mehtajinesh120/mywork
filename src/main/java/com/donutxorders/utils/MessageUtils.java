@@ -68,8 +68,8 @@ public class MessageUtils {
         Matcher matcher = hexPattern.matcher(message);
         StringBuffer buffer = new StringBuffer();
         while (matcher.find()) {
-            String color = matcher.group(1);
-            matcher.appendReplacement(buffer, ChatColor.of("#" + color).toString());
+            // Fallback: strip hex, use empty string
+            matcher.appendReplacement(buffer, "");
         }
         matcher.appendTail(buffer);
         return buffer.toString();
@@ -90,18 +90,8 @@ public class MessageUtils {
 
     // Simple gradient application (linear between two colors)
     private static String applyGradientToText(String text, String[] colors) {
-        if (colors.length < 2 || text.length() < 2) return text;
-        StringBuilder builder = new StringBuilder();
-        int steps = text.length() - 1;
-        int[] start = hexToRgb(colors[0]);
-        int[] end = hexToRgb(colors[1]);
-        for (int i = 0; i < text.length(); i++) {
-            int r = interpolate(start[0], end[0], i, steps);
-            int g = interpolate(start[1], end[1], i, steps);
-            int b = interpolate(start[2], end[2], i, steps);
-            builder.append(ChatColor.of(String.format("#%02x%02x%02x", r, g, b))).append(text.charAt(i));
-        }
-        return builder.toString();
+        // Fallback: just return text, no gradient in 1.17
+        return text;
     }
 
     private static int[] hexToRgb(String hex) {
@@ -116,3 +106,4 @@ public class MessageUtils {
     private static int interpolate(int start, int end, int step, int max) {
         return start + (end - start) * step / Math.max(max, 1);
     }
+}

@@ -169,3 +169,5 @@ public class MainOrderGUI {
         String filter = "all";
         String search = "";
         List<Order> filteredOrders = new ArrayList<>();
+    }
+}

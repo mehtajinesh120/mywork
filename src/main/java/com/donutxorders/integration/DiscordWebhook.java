@@ -114,3 +114,4 @@ public class DiscordWebhook {
         if (text == null) return "";
         return text.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n");
     }
+}

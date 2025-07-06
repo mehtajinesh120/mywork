@@ -68,4 +68,6 @@ public class OrderCommand implements CommandExecutor, TabCompleter {
                 completions.add("reload");
             }
         }
-        return
+        return completions;
+    }
+}

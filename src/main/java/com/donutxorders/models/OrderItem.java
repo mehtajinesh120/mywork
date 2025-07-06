@@ -107,7 +107,7 @@ public class OrderItem implements Serializable {
         if (pdc1 == null && pdc2 == null) return true;
         if (pdc1 == null || pdc2 == null) return false;
         if (!pdc1.getKeys().equals(pdc2.getKeys())) return false;
-        for (var key : pdc1.getKeys()) {
+        for (NamespacedKey key : pdc1.getKeys()) {
             Object v1 = pdc1.has(key) ? pdc1.get(key, pdc1.get(key).getClass()) : null;
             Object v2 = pdc2.has(key) ? pdc2.get(key, pdc2.get(key).getClass()) : null;
             if (!Objects.equals(v1, v2)) return false;

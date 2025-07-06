@@ -179,4 +179,6 @@ public class SearchGUI {
         int currentPage = 0;
         String query = "";
         List<Order> results = new ArrayList<>();
-        Deque<String> history = new
+        Deque<String> history = new LinkedList<>();
+    }
+}

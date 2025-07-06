@@ -140,3 +140,5 @@ public class NewOrderGUI {
             // Let player place item (implement drag/drop or click logic)
             player.sendMessage(MessageUtils.colorize("&ePlace the item you want to order."));
         }
+    }
+}

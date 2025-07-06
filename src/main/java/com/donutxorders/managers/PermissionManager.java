@@ -41,4 +41,6 @@ public class PermissionManager {
 
     // Check if a player can access admin features
     public boolean canAccessAdmin(Player player) {
-        return hasPermission(player,
+        return hasPermission(player, "donutxorders.admin");
+    }
+}

@@ -2,6 +2,7 @@ package com.donutxorders.integration;
 
 import com.donutxorders.core.DonutxOrders;
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
@@ -23,7 +24,7 @@ public class VaultIntegration {
             plugin.getLogger().severe("Vault plugin not found! Economy features will be disabled.");
             return false;
         }
-        var rsp = plugin.getServer().getServicesManager().getRegistration(Economy.class);
+        org.bukkit.plugin.RegisteredServiceProvider<Economy> rsp = plugin.getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
             plugin.getLogger().severe("No economy provider found via Vault!");
             return false;
@@ -55,7 +56,7 @@ public class VaultIntegration {
             plugin.getLogger().warning("Attempted to withdraw negative amount: " + amount);
             return false;
         }
-        var response = economy.withdrawPlayer(player, amount);
+        EconomyResponse response = economy.withdrawPlayer(player, amount);
         if (!response.transactionSuccess()) {
             plugin.getLogger().log(Level.WARNING, "Failed to withdraw {0} from {1}: {2}",
                     new Object[]{amount, player.getName(), response.errorMessage});
@@ -73,7 +74,7 @@ public class VaultIntegration {
             plugin.getLogger().warning("Attempted to deposit negative amount: " + amount);
             return false;
         }
-        var response = economy.depositPlayer(player, amount);
+        EconomyResponse response = economy.depositPlayer(player, amount);
         if (!response.transactionSuccess()) {
             plugin.getLogger().log(Level.WARNING, "Failed to deposit {0} to {1}: {2}",
                     new Object[]{amount, player.getName(), response.errorMessage});
@@ -83,4 +84,10 @@ public class VaultIntegration {
 
     // Get the economy provider (if needed elsewhere)
     public Economy getEconomy() {
+        org.bukkit.plugin.RegisteredServiceProvider<Economy> response = economy == null ? null : plugin.getServer().getServicesManager().getRegistration(Economy.class);
+        if (response != null && !response.getProvider().equals(economy)) {
+            economy = response.getProvider();
+        }
         return economy;
+    }
+}
