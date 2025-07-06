@@ -1,0 +1,34 @@
+name: DonutxOrders
+version: 1.0.0
+main: com.donutxorders.core.DonutxOrders
+api-version: 1.21
+author: Jinesh Mehta
+description: Advanced order management system for Minecraft servers
+depend:
+  - Vault
+softdepend:
+  - NBTApi
+
+commands:
+  order:
+    description: Manage orders
+    usage: /order
+    permission: donutxorders.use
+  orders:
+    description: Manage orders
+    usage: /orders
+    permission: donutxorders.use
+
+permissions:
+  donutxorders.use:
+    description: Basic order usage permission
+    default: true
+  donutxorders.admin:
+    description: Administrative permission for order management
+    default: op
+  donutxorders.reload:
+    description: Permission to reload the plugin
+    default: op
+  donutxorders.limit.*:
+    description: Permission for order limits
+    default: op
