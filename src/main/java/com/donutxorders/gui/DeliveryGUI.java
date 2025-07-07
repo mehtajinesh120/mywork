@@ -79,7 +79,7 @@ public class DeliveryGUI {
         // Update order
         order.setDeliveredAmount(order.getDeliveredAmount() + deliverAmount);
         if (order.isFullyFulfilled()) {
-            order.setStatus("completed");
+            order.setStatus(com.donutxorders.models.OrderStatus.COMPLETED);
         }
         plugin.getDatabaseManager().updateOrder(order);
 

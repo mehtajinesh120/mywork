@@ -20,9 +20,17 @@ public class Order implements Serializable {
     private int deliveredAmount;
     private long createdTime;
     private long expiresAt;
-    private String status;
+    private OrderStatus status;
 
-    public Order(int id, UUID creatorUUID, ItemStack itemStack, int quantity, double pricePerItem, int deliveredAmount, long createdTime, long expiresAt, String status) {
+    // Additional fields for plugin features
+    private String world;
+    private double x, y, z;
+    private double fee;
+    private double totalPrice;
+    private String description;
+    private java.util.List<OrderItem> items = new java.util.ArrayList<>();
+
+    public Order(int id, UUID creatorUUID, ItemStack itemStack, int quantity, double pricePerItem, int deliveredAmount, long createdTime, long expiresAt, OrderStatus status) {
         this.id = id;
         this.creatorUUID = creatorUUID;
         this.itemStack = itemStack;
@@ -34,13 +42,13 @@ public class Order implements Serializable {
         this.status = status;
     }
 
-    public Order(UUID creatorUUID, ItemStack itemStack, int quantity, double pricePerItem, long createdTime, long expiresAt, String status) {
+    public Order(UUID creatorUUID, ItemStack itemStack, int quantity, double pricePerItem, long createdTime, long expiresAt, OrderStatus status) {
         this(-1, creatorUUID, itemStack, quantity, pricePerItem, 0, createdTime, expiresAt, status);
     }
 
     // Serialization for database storage (example: to/from ResultSet)
     public static Order fromResultSet(ResultSet rs, ItemStack itemStack) throws SQLException {
-        return new Order(
+        Order order = new Order(
             rs.getInt("id"),
             UUID.fromString(rs.getString("player_uuid")),
             itemStack,
@@ -49,8 +57,17 @@ public class Order implements Serializable {
             rs.getInt("delivered_amount"),
             rs.getLong("created_at"),
             rs.getLong("expires_at"),
-            rs.getString("status")
+            OrderStatus.valueOf(rs.getString("status"))
         );
+        order.setWorld(rs.getString("world"));
+        order.setX(rs.getDouble("x"));
+        order.setY(rs.getDouble("y"));
+        order.setZ(rs.getDouble("z"));
+        order.setFee(rs.getDouble("fee"));
+        order.setTotalPrice(rs.getDouble("total_price"));
+        order.setDescription(rs.getString("description"));
+        // Items should be set separately if needed
+        return order;
     }
 
     // Getters and Setters
@@ -78,8 +95,13 @@ public class Order implements Serializable {
     public long getExpiresAt() { return expiresAt; }
     public void setExpiresAt(long expiresAt) { this.expiresAt = expiresAt; }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public OrderStatus getStatus() { return status; }
+    public void setStatus(OrderStatus status) { this.status = status; }
+    // Deprecated String status methods for compatibility
+    @Deprecated
+    public String getStatusString() { return status != null ? status.name() : null; }
+    @Deprecated
+    public void setStatusString(String status) { this.status = status != null ? OrderStatus.valueOf(status) : null; }
 
     // Business logic methods
 
@@ -92,7 +114,7 @@ public class Order implements Serializable {
     }
 
     public boolean canBeCancelled() {
-        return !isExpired() && !isFullyFulfilled() && !"cancelled".equalsIgnoreCase(status);
+        return !isExpired() && !isFullyFulfilled() && status != OrderStatus.CANCELLED;
     }
 
     public long getTimeRemaining() {
@@ -107,4 +129,33 @@ public class Order implements Serializable {
     public double getAmountPaid() {
         return pricePerItem * deliveredAmount;
     }
+
+    // --- Additional fields and methods ---
+    public String getWorld() { return world; }
+    public void setWorld(String world) { this.world = world; }
+
+    public double getX() { return x; }
+    public void setX(double x) { this.x = x; }
+
+    public double getY() { return y; }
+    public void setY(double y) { this.y = y; }
+
+    public double getZ() { return z; }
+    public void setZ(double z) { this.z = z; }
+
+    public double getFee() { return fee; }
+    public void setFee(double fee) { this.fee = fee; }
+
+    public double getTotalPrice() { return totalPrice; }
+    public void setTotalPrice(double totalPrice) { this.totalPrice = totalPrice; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public java.util.List<OrderItem> getItems() { return items; }
+    public void setItems(java.util.List<OrderItem> items) { this.items = items; }
+    public void addItem(OrderItem item) { this.items.add(item); }
+
+    // Alias for compatibility
+    public UUID getPlayerUuid() { return getCreatorUUID(); }
 }

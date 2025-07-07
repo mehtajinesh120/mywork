@@ -3,6 +3,7 @@ package com.donutxorders.models;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.NamespacedKey;
 
 import java.io.Serializable;
 import java.sql.ResultSet;
@@ -108,9 +109,10 @@ public class OrderItem implements Serializable {
         if (pdc1 == null || pdc2 == null) return false;
         if (!pdc1.getKeys().equals(pdc2.getKeys())) return false;
         for (NamespacedKey key : pdc1.getKeys()) {
-            Object v1 = pdc1.has(key) ? pdc1.get(key, pdc1.get(key).getClass()) : null;
-            Object v2 = pdc2.has(key) ? pdc2.get(key, pdc2.get(key).getClass()) : null;
-            if (!Objects.equals(v1, v2)) return false;
+            // Use STRING as the generic type for comparison; adjust if you store other types
+            Object v1 = pdc1.has(key, org.bukkit.persistence.PersistentDataType.STRING) ? pdc1.get(key, org.bukkit.persistence.PersistentDataType.STRING) : null;
+            Object v2 = pdc2.has(key, org.bukkit.persistence.PersistentDataType.STRING) ? pdc2.get(key, org.bukkit.persistence.PersistentDataType.STRING) : null;
+            if (!java.util.Objects.equals(v1, v2)) return false;
         }
         return true;
     }

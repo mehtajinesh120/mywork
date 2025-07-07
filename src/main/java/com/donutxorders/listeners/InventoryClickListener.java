@@ -34,7 +34,7 @@ public class InventoryClickListener implements Listener {
         if (!(event.getWhoClicked() instanceof Player)) return;
         Player player = (Player) event.getWhoClicked();
         Inventory inv = event.getInventory();
-        String title = inv.getTitle();
+        String title = ((Player) event.getWhoClicked()).getOpenInventory().getTitle();
 
         // Prevent shift-clicks and double-clicks for all plugin GUIs
         if (event.isShiftClick() || event.getClick().isKeyboardClick() || event.getClick().isCreativeAction()) {

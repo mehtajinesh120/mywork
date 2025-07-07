@@ -1,6 +1,6 @@
 package com.donutxorders.core;
 
-import com.donutxorders.utils.ColorUtils;
+import com.donutxorders.utils.MessageUtils;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -72,7 +72,7 @@ public class ConfigManager {
      */
     public String getString(String path, String defaultValue) {
         String value = config.getString(path, defaultValue);
-        return ColorUtils.colorize(value);
+        return MessageUtils.colorize(value);
     }
     
     /**
@@ -108,7 +108,7 @@ public class ConfigManager {
      */
     public List<String> getStringList(String path) {
         List<String> list = config.getStringList(path);
-        list.replaceAll(ColorUtils::colorize);
+        list.replaceAll(MessageUtils::colorize);
         return list;
     }
     

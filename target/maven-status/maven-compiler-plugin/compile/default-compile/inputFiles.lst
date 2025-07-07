@@ -22,6 +22,7 @@ D:\DonutxOrders\src\main\java\com\donutxorders\managers\OrderManager.java
 D:\DonutxOrders\src\main\java\com\donutxorders\managers\PermissionManager.java
 D:\DonutxOrders\src\main\java\com\donutxorders\models\Order.java
 D:\DonutxOrders\src\main\java\com\donutxorders\models\OrderItem.java
+D:\DonutxOrders\src\main\java\com\donutxorders\models\OrderStatus.java
 D:\DonutxOrders\src\main\java\com\donutxorders\models\PlayerData.java
 D:\DonutxOrders\src\main\java\com\donutxorders\tasks\DatabaseCleanupTask.java
 D:\DonutxOrders\src\main\java\com\donutxorders\tasks\OrderExpirationTask.java

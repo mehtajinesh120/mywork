@@ -168,7 +168,7 @@ public class SearchGUI {
         if (query == null || query.isEmpty()) return true;
         String q = query.toLowerCase();
         if (order.getCreatorUUID().toString().toLowerCase().contains(q)) return true;
-        if (order.getStatus().toLowerCase().contains(q)) return true;
+        if (order.getStatus().name().toLowerCase().contains(q)) return true;
         if (order.getItemStack() != null && order.getItemStack().getType().name().toLowerCase().contains(q)) return true;
         // Add custom/NBT item search as needed
         return false;

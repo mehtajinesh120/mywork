@@ -7,6 +7,7 @@ import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.logging.Level;
 
@@ -34,6 +35,16 @@ public class EconomyManager {
         }
         economy = rsp.getProvider();
         plugin.getLogger().info("Vault economy hooked: " + economy.getName());
+    }
+
+    public void initialize() {
+        // TODO: Implement initialization logic
+        // Placeholder stub
+    }
+
+    public void reload() {
+        // TODO: Implement reload logic
+        // Placeholder stub
     }
 
     public boolean hasBalance(OfflinePlayer player, double amount) {

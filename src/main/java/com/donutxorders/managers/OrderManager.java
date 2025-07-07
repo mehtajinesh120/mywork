@@ -4,6 +4,7 @@ import com.donutxorders.core.DonutxOrders;
 import com.donutxorders.database.DatabaseManager;
 import com.donutxorders.models.Order;
 import com.donutxorders.models.OrderItem;
+import com.donutxorders.models.OrderStatus;
 import com.donutxorders.models.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -49,14 +50,14 @@ public class OrderManager {
             // if (!plugin.getEconomyManager().withdraw(player, totalCost)) { ... }
 
             Order order = new Order(
-                    playerData.getUuid(),
-                    itemStack,
-                    quantity,
-                    pricePerItem,
-                    System.currentTimeMillis(),
-                    expiresAt,
-                    "active"
-            );
+    playerData.getUuid(),
+    itemStack,
+    quantity,
+    pricePerItem,
+    System.currentTimeMillis(),
+    expiresAt,
+    OrderStatus.PENDING
+);
             boolean saved = databaseManager.saveOrder(order).join();
             if (saved) {
                 playerData.updateStats(1, 0, totalCost, 0);
@@ -98,7 +99,7 @@ public class OrderManager {
             // Update order
             order.setDeliveredAmount(order.getDeliveredAmount() + fulfillable);
             if (order.isFullyFulfilled()) {
-                order.setStatus("completed");
+                order.setStatus(OrderStatus.COMPLETED);
             }
             databaseManager.updateOrder(order);
 
@@ -133,7 +134,7 @@ public class OrderManager {
                 player.sendMessage("Order cannot be cancelled.");
                 return false;
             }
-            order.setStatus("cancelled");
+            order.setStatus(OrderStatus.CANCELLED);
             boolean updated = databaseManager.updateOrder(order).join();
             if (updated) {
                 // Refund logic if needed
@@ -153,7 +154,7 @@ public class OrderManager {
                 .filter(order ->
                         order.getCreatorUUID().toString().toLowerCase().contains(q) ||
                         (order.getItemStack() != null && order.getItemStack().getType().name().toLowerCase().contains(q)) ||
-                        order.getStatus().toLowerCase().contains(q)
+                        order.getStatus().name().toLowerCase().contains(q)
                 )
                 .collect(Collectors.toList());
     }
@@ -179,7 +180,7 @@ public class OrderManager {
     // Filter orders by status
     public List<Order> filterOrders(List<Order> orders, String status) {
         return orders.stream()
-                .filter(order -> order.getStatus().equalsIgnoreCase(status))
+                .filter(order -> order.getStatus().name().equalsIgnoreCase(status))
                 .collect(Collectors.toList());
     }
 
@@ -191,4 +192,24 @@ public class OrderManager {
     }
 
     // Additional utility methods as needed
+
+    // --- ADDED: Stub methods to fix compilation errors ---
+    public void saveAllData() {
+        // TODO: Implement saving all data
+        // Placeholder stub
+    }
+
+    public void reload() {
+        // TODO: Implement reload logic
+        // Placeholder stub
+    }
+
+    // GUI accessors (stubs)
+    public Object getMainOrderGUI() { throw new UnsupportedOperationException("Not implemented"); }
+    public Object getDeliveryGUI() { throw new UnsupportedOperationException("Not implemented"); }
+    public Object getYourOrdersGUI() { throw new UnsupportedOperationException("Not implemented"); }
+    public Object getNewOrderGUI() { throw new UnsupportedOperationException("Not implemented"); }
+    public Object getItemSelectionGUI() { throw new UnsupportedOperationException("Not implemented"); }
+    public Object getSearchGUI() { throw new UnsupportedOperationException("Not implemented"); }
+
 }

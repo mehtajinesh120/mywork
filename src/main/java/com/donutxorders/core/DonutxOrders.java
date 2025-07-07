@@ -149,7 +149,7 @@ public class DonutxOrders extends JavaPlugin {
     
     private boolean initializeDatabase() {
         try {
-            databaseManager = new DatabaseManager(this);
+            databaseManager = DatabaseManager.createDatabaseManager(this);
             
             // Initialize database asynchronously
             CompletableFuture<Boolean> initFuture = databaseManager.initializeAsync();
@@ -182,7 +182,7 @@ public class DonutxOrders extends JavaPlugin {
             permissionManager = new PermissionManager(this);
             
             // Initialize Order Manager
-            orderManager = new OrderManager(this, databaseManager, economyManager, permissionManager);
+            orderManager = new OrderManager(this);
             
             getLogger().info("All managers initialized successfully");
             return true;
