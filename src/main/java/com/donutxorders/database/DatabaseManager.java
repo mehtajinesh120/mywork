@@ -1,10 +1,8 @@
 package com.donutxorders.database;
 
 import com.donutxorders.core.DonutxOrders;
-
 import com.donutxorders.models.Order;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
+
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.sql.*;
@@ -23,24 +21,11 @@ public abstract class DatabaseManager {
 
     protected final DonutxOrders plugin;
     protected final FileConfiguration config;
-    protected HikariDataSource dataSource;
+    
     protected final ConcurrentHashMap<String, PreparedStatement> preparedStatements;
     
-    // Database connection settings
-    protected String host;
-    protected int port;
-    protected String database;
-    protected String username;
-    protected String password;
-    protected boolean ssl;
-    protected String databaseType;
-    
-    // Connection pool settings
-    protected int maxPoolSize;
-    protected int minIdle;
-    protected long connectionTimeout;
-    protected long idleTimeout;
-    protected long maxLifetime;
+    // SQLite database file path
+    protected String databaseFilePath;
     
     // Table names
     protected static final String ORDERS_TABLE = "donutx_orders";
@@ -51,13 +36,7 @@ public abstract class DatabaseManager {
      * Factory method to create appropriate database manager
      */
     public static DatabaseManager createDatabaseManager(DonutxOrders plugin) {
-        String databaseType = plugin.getConfigManager().getString("database.type", "SQLite");
-        
-        if ("MySQL".equalsIgnoreCase(databaseType)) {
-            return new MySQLDatabase(plugin);
-        } else {
-            return new SQLiteDatabase(plugin);
-        }
+        return new SQLiteDatabase(plugin);
     }
     
     protected DatabaseManager(DonutxOrders plugin) {
@@ -65,26 +44,21 @@ public abstract class DatabaseManager {
         this.config = plugin.getConfigManager().getConfig();
         this.preparedStatements = new ConcurrentHashMap<>();
         loadDatabaseSettings();
+        // Explicitly load SQLite JDBC driver for both Paper and Spigot
+        try {
+            Class.forName("org.sqlite.JDBC");
+            plugin.getLogger().info("SQLite JDBC driver loaded successfully.");
+        } catch (ClassNotFoundException e) {
+            plugin.getLogger().severe("SQLite JDBC driver not found! Please ensure it is available on your server. For Spigot, place sqlite-jdbc-3.44.1.0.jar in the /libs or /plugins folder. For Paper, the library should be auto-downloaded.");
+        }
     }
     
     /**
      * Load database settings from configuration
      */
     private void loadDatabaseSettings() {
-        databaseType = config.getString("database.type", "SQLite");
-        host = config.getString("database.mysql.host", "localhost");
-        port = config.getInt("database.mysql.port", 3306);
-        database = config.getString("database.mysql.database", "donutxorders");
-        username = config.getString("database.mysql.username", "root");
-        password = config.getString("database.mysql.password", "password");
-        ssl = config.getBoolean("database.mysql.ssl", false);
-        
-        // Connection pool settings
-        maxPoolSize = config.getInt("database.connection-pool.maximum-pool-size", 10);
-        minIdle = config.getInt("database.connection-pool.minimum-idle", 2);
-        connectionTimeout = config.getLong("database.connection-pool.connection-timeout", 30000);
-        idleTimeout = config.getLong("database.connection-pool.idle-timeout", 600000);
-        maxLifetime = config.getLong("database.connection-pool.max-lifetime", 1800000);
+        // Only load SQLite file path
+        databaseFilePath = config.getString("database.file", "plugins/DonutxOrders/orders.db");
     }
     
     /**
@@ -121,52 +95,22 @@ public abstract class DatabaseManager {
     }
     
     /**
-     * Connect to the database with connection pooling
+     * Connect to the database
      */
     public boolean connect() {
-        try {
-            if (dataSource != null && !dataSource.isClosed()) {
+        try (Connection connection = DriverManager.getConnection("jdbc:sqlite:" + databaseFilePath)) {
+            if (connection.isValid(5)) {
+                plugin.getLogger().info("Database connection established successfully");
                 return true;
-            }
-            
-            HikariConfig hikariConfig = new HikariConfig();
-            
-            // Configure connection pool
-            hikariConfig.setMaximumPoolSize(maxPoolSize);
-            hikariConfig.setMinimumIdle(minIdle);
-            hikariConfig.setConnectionTimeout(connectionTimeout);
-            hikariConfig.setIdleTimeout(idleTimeout);
-            hikariConfig.setMaxLifetime(maxLifetime);
-            
-            // Set pool name
-            hikariConfig.setPoolName("DonutxOrders-Pool");
-            
-            // Configure connection properties
-            configureConnection(hikariConfig);
-            
-            // Create data source
-            dataSource = new HikariDataSource(hikariConfig);
-            
-            // Test connection
-            try (Connection connection = dataSource.getConnection()) {
-                if (connection.isValid(5)) {
-                    plugin.getLogger().info("Database connection established successfully");
-                    return true;
-                } else {
-                    plugin.getLogger().severe("Database connection test failed");
-                    return false;
-                }
+            } else {
+                plugin.getLogger().severe("Database connection test failed");
+                return false;
             }
         } catch (SQLException e) {
             plugin.getLogger().log(Level.SEVERE, "Failed to connect to database", e);
             return false;
         }
     }
-    
-    /**
-     * Configure database-specific connection settings
-     */
-    protected abstract void configureConnection(HikariConfig config);
     
     /**
      * Disconnect from the database
@@ -180,12 +124,6 @@ public abstract class DatabaseManager {
                 }
             }
             preparedStatements.clear();
-            
-            // Close data source
-            if (dataSource != null && !dataSource.isClosed()) {
-                dataSource.close();
-                plugin.getLogger().info("Database connection closed");
-            }
         } catch (SQLException e) {
             plugin.getLogger().log(Level.WARNING, "Error while disconnecting from database", e);
         }
@@ -301,13 +239,12 @@ public abstract class DatabaseManager {
     protected abstract String getDeleteOrphanedItemsSQL();
     
     /**
-     * Get a connection from the pool
+     * Get a direct connection to SQLite database
      */
     public Connection getConnection() throws SQLException {
-        if (dataSource == null || dataSource.isClosed()) {
-            throw new SQLException("Database connection is not available");
-        }
-        return dataSource.getConnection();
+        // Use the plugin's data folder for the SQLite DB file
+        String dbPath = plugin.getDataFolder().getAbsolutePath() + "/orders.db";
+        return DriverManager.getConnection("jdbc:sqlite:" + dbPath);
     }
     
     /**
@@ -578,9 +515,8 @@ public abstract class DatabaseManager {
      * Check if the database is connected
      */
     public boolean isConnected() {
-        try {
-            return dataSource != null && !dataSource.isClosed() && 
-                   dataSource.getConnection().isValid(5);
+        try (Connection conn = getConnection()) {
+            return conn != null && conn.isValid(5);
         } catch (SQLException e) {
             return false;
         }

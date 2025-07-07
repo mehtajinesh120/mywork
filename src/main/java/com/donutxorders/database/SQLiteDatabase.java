@@ -6,10 +6,6 @@ import com.donutxorders.models.OrderStatus;
 
 import com.donutxorders.core.DonutxOrders;
 import com.donutxorders.database.DatabaseManager;
-import com.donutxorders.models.Order;
-import com.donutxorders.models.OrderItem;
-import com.donutxorders.models.OrderStatus;
-import com.zaxxer.hikari.HikariConfig;
 
 import java.io.File;
 import java.sql.*;
@@ -23,7 +19,7 @@ public class SQLiteDatabase extends DatabaseManager {
     @Override
     public List<Order> getAllOrders() {
         List<Order> orders = new ArrayList<>();
-        try (Connection connection = getConnection();
+        try (Connection connection = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getAbsolutePath());
              PreparedStatement statement = connection.prepareStatement(getSelectAllOrdersSQL());
              ResultSet rs = statement.executeQuery()) {
             while (rs.next()) {
@@ -36,12 +32,9 @@ public class SQLiteDatabase extends DatabaseManager {
         return orders;
     }
 
-    
-
-
     @Override
     public boolean updateOrderSync(Order order) {
-        try (Connection connection = getConnection();
+        try (Connection connection = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getAbsolutePath());
              PreparedStatement statement = connection.prepareStatement(getUpdateOrderSQL())) {
             statement.setString(1, order.getStatus().name());
             if (order.getExpiresAt() > 0) {
@@ -63,7 +56,7 @@ public class SQLiteDatabase extends DatabaseManager {
 
     @Override
     public boolean deleteOrderSync(String orderId) {
-        try (Connection connection = getConnection();
+        try (Connection connection = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getAbsolutePath());
              PreparedStatement statement = connection.prepareStatement(getDeleteOrderSQL())) {
             statement.setString(1, orderId);
             int rows = statement.executeUpdate();
@@ -78,17 +71,15 @@ public class SQLiteDatabase extends DatabaseManager {
 
     public SQLiteDatabase(DonutxOrders plugin) {
         super(plugin);
+        // Use the new databaseFilePath from DatabaseManager
+        this.dbFile = new File(databaseFilePath);
     }
 
-    @Override
-    protected void configureConnection(HikariConfig config) {
+    protected void initialize() {
         if (!plugin.getDataFolder().exists()) {
             plugin.getDataFolder().mkdirs();
         }
         dbFile = new File(plugin.getDataFolder(), "orders.db");
-        String jdbcUrl = "jdbc:sqlite:" + dbFile.getAbsolutePath();
-        config.setJdbcUrl(jdbcUrl);
-        config.setDriverClassName("org.sqlite.JDBC");
     }
 
     @Override

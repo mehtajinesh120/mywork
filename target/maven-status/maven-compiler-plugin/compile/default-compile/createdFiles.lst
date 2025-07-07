@@ -1,4 +1,3 @@
-com\donutxorders\gui\SearchGUI$1.class
 com\donutxorders\utils\MessageUtils.class
 com\donutxorders\managers\OrderManager.class
 com\donutxorders\tasks\DatabaseCleanupTask.class
@@ -22,10 +21,8 @@ com\donutxorders\commands\OrdersTabCompleter.class
 com\donutxorders\database\DatabaseManager.class
 com\donutxorders\database\SQLiteDatabase.class
 com\donutxorders\gui\MainOrderGUI$GUIState.class
-com\donutxorders\gui\MainOrderGUI$1.class
 com\donutxorders\utils\ColorUtils.class
 com\donutxorders\core\DonutxOrders.class
-com\donutxorders\gui\ItemSelectionGUI$1.class
 com\donutxorders\utils\TimeUtils.class
 com\donutxorders\managers\PermissionManager.class
 com\donutxorders\models\OrderStatus.class
@@ -37,7 +34,6 @@ com\donutxorders\managers\PlayerDataManager.class
 com\donutxorders\managers\ItemManager.class
 com\donutxorders\tasks\OrderExpirationTask.class
 com\donutxorders\core\DonutxOrders$5.class
-com\donutxorders\database\MySQLDatabase.class
 com\donutxorders\models\OrderItem.class
 com\donutxorders\database\DatabaseManager$DatabaseStats.class
 com\donutxorders\gui\NewOrderGUI.class

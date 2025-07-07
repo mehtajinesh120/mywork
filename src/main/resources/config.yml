@@ -7,18 +7,7 @@
 # Database Configuration
 # =========================
 database:
-  # Type: "sqlite" or "mysql"
-  type: "sqlite"
-  sqlite:
-    file: "plugins/DonutxOrders/orders.db"
-  mysql:
-    host: "localhost"
-    port: 3306
-    database: "donutxorders"
-    username: "root"
-    password: "password"
-    useSSL: false
-    pool-size: 10
+  file: "plugins/DonutxOrders/orders.db"
 
 # =========================
 # Order Expiration & Cleanup

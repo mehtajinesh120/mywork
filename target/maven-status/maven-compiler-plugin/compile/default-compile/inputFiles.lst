@@ -3,7 +3,6 @@ D:\DonutxOrders\src\main\java\com\donutxorders\commands\OrdersTabCompleter.java
 D:\DonutxOrders\src\main\java\com\donutxorders\core\ConfigManager.java
 D:\DonutxOrders\src\main\java\com\donutxorders\core\DonutxOrders.java
 D:\DonutxOrders\src\main\java\com\donutxorders\database\DatabaseManager.java
-D:\DonutxOrders\src\main\java\com\donutxorders\database\MySQLDatabase.java
 D:\DonutxOrders\src\main\java\com\donutxorders\database\SQLiteDatabase.java
 D:\DonutxOrders\src\main\java\com\donutxorders\gui\DeliveryGUI.java
 D:\DonutxOrders\src\main\java\com\donutxorders\gui\ItemSelectionGUI.java

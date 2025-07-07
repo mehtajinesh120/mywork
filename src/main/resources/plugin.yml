@@ -1,6 +1,8 @@
 name: DonutxOrders
 version: 1.0.0
 main: com.donutxorders.core.DonutxOrders
+libraries:
+  - org.xerial:sqlite-jdbc:3.44.1.0
 api-version: 1.21
 author: Jinesh Mehta
 description: Advanced order management system for Minecraft servers
