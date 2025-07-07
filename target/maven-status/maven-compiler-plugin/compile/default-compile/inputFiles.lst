@@ -20,6 +20,7 @@ D:\DonutxOrders\src\main\java\com\donutxorders\managers\EconomyManager.java
 D:\DonutxOrders\src\main\java\com\donutxorders\managers\ItemManager.java
 D:\DonutxOrders\src\main\java\com\donutxorders\managers\OrderManager.java
 D:\DonutxOrders\src\main\java\com\donutxorders\managers\PermissionManager.java
+D:\DonutxOrders\src\main\java\com\donutxorders\managers\PlayerDataManager.java
 D:\DonutxOrders\src\main\java\com\donutxorders\models\Order.java
 D:\DonutxOrders\src\main\java\com\donutxorders\models\OrderItem.java
 D:\DonutxOrders\src\main\java\com\donutxorders\models\OrderStatus.java

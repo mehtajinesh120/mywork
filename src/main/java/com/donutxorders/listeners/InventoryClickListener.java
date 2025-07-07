@@ -21,12 +21,12 @@ public class InventoryClickListener implements Listener {
 
     public InventoryClickListener(DonutxOrders plugin) {
         this.plugin = plugin;
-        this.mainOrderGUI = plugin.getOrderManager() != null ? plugin.getOrderManager().getMainOrderGUI() : null;
-        this.deliveryGUI = plugin.getOrderManager() != null ? plugin.getOrderManager().getDeliveryGUI() : null;
-        this.yourOrdersGUI = plugin.getOrderManager() != null ? plugin.getOrderManager().getYourOrdersGUI() : null;
-        this.newOrderGUI = plugin.getOrderManager() != null ? plugin.getOrderManager().getNewOrderGUI() : null;
-        this.itemSelectionGUI = plugin.getOrderManager() != null ? plugin.getOrderManager().getItemSelectionGUI() : null;
-        this.searchGUI = plugin.getOrderManager() != null ? plugin.getOrderManager().getSearchGUI() : null;
+        this.mainOrderGUI = plugin.getOrderManager() != null ? (MainOrderGUI) plugin.getOrderManager().getMainOrderGUI() : null;
+        this.deliveryGUI = plugin.getOrderManager() != null ? (DeliveryGUI) plugin.getOrderManager().getDeliveryGUI() : null;
+        this.yourOrdersGUI = plugin.getOrderManager() != null ? (YourOrdersGUI) plugin.getOrderManager().getYourOrdersGUI() : null;
+        this.newOrderGUI = plugin.getOrderManager() != null ? (NewOrderGUI) plugin.getOrderManager().getNewOrderGUI() : null;
+        this.itemSelectionGUI = plugin.getOrderManager() != null ? (ItemSelectionGUI) plugin.getOrderManager().getItemSelectionGUI() : null;
+        this.searchGUI = plugin.getOrderManager() != null ? (SearchGUI) plugin.getOrderManager().getSearchGUI() : null;
     }
 
     @EventHandler
@@ -67,7 +67,7 @@ public class InventoryClickListener implements Listener {
 
         // Prevent item duplication and edge cases
         if (event.getCurrentItem() != null && event.getCurrentItem().getAmount() > 0) {
-            if (event.getSlotType().isContainer()) {
+            if (event.getSlotType() == org.bukkit.event.inventory.InventoryType.SlotType.CONTAINER) {
                 event.setCancelled(true);
             }
         }

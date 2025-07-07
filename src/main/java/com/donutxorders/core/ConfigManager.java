@@ -237,8 +237,8 @@ public class ConfigManager {
         config.set("metrics.enabled", true);
         
         // World settings
-        config.set("worlds.blacklisted", List.of());
-        config.set("worlds.whitelisted", List.of());
+        config.set("worlds.blacklisted", java.util.Arrays.asList());
+        config.set("worlds.whitelisted", java.util.Arrays.asList());
         config.set("worlds.mode", "blacklist");
         
         // Permissions
@@ -256,7 +256,7 @@ public class ConfigManager {
         // Main GUI Items
         config.set("gui.items.new-order.material", "EMERALD");
         config.set("gui.items.new-order.name", "<gradient:#00ff00:#00cc00>&lCreate New Order");
-        config.set("gui.items.new-order.lore", List.of(
+        config.set("gui.items.new-order.lore", java.util.Arrays.asList(
             "",
             "&7Click to create a new order",
             "&7for items you need!",
@@ -268,7 +268,7 @@ public class ConfigManager {
         
         config.set("gui.items.your-orders.material", "CHEST");
         config.set("gui.items.your-orders.name", "<gradient:#ff6b6b:#ff4757>&lYour Orders");
-        config.set("gui.items.your-orders.lore", List.of(
+        config.set("gui.items.your-orders.lore", java.util.Arrays.asList(
             "",
             "&7View and manage your",
             "&7active orders",
@@ -281,7 +281,7 @@ public class ConfigManager {
         
         config.set("gui.items.delivery.material", "MINECART");
         config.set("gui.items.delivery.name", "<gradient:#4ecdc4:#44bd32>&lDelivery Orders");
-        config.set("gui.items.delivery.lore", List.of(
+        config.set("gui.items.delivery.lore", java.util.Arrays.asList(
             "",
             "&7View orders that you",
             "&7can deliver for rewards!",
@@ -294,7 +294,7 @@ public class ConfigManager {
         
         config.set("gui.items.search.material", "COMPASS");
         config.set("gui.items.search.name", "<gradient:#ffa726:#ff9800>&lSearch Orders");
-        config.set("gui.items.search.lore", List.of(
+        config.set("gui.items.search.lore", java.util.Arrays.asList(
             "",
             "&7Search for specific",
             "&7orders by item or player",
@@ -305,7 +305,7 @@ public class ConfigManager {
         
         config.set("gui.items.statistics.material", "BOOK");
         config.set("gui.items.statistics.name", "<gradient:#9c27b0:#673ab7>&lStatistics");
-        config.set("gui.items.statistics.lore", List.of(
+        config.set("gui.items.statistics.lore", java.util.Arrays.asList(
             "",
             "&7View your order statistics",
             "&7and achievements",
@@ -320,7 +320,7 @@ public class ConfigManager {
         
         config.set("gui.items.settings.material", "REDSTONE");
         config.set("gui.items.settings.name", "<gradient:#e74c3c:#c0392b>&lSettings");
-        config.set("gui.items.settings.lore", List.of(
+        config.set("gui.items.settings.lore", java.util.Arrays.asList(
             "",
             "&7Configure your order",
             "&7preferences and notifications",
@@ -332,7 +332,7 @@ public class ConfigManager {
         // Navigation items
         config.set("gui.items.back.material", "ARROW");
         config.set("gui.items.back.name", "&c&lBack");
-        config.set("gui.items.back.lore", List.of(
+        config.set("gui.items.back.lore", java.util.Arrays.asList(
             "",
             "&7Go back to the previous menu",
             "",
@@ -342,7 +342,7 @@ public class ConfigManager {
         
         config.set("gui.items.next-page.material", "PAPER");
         config.set("gui.items.next-page.name", "&a&lNext Page");
-        config.set("gui.items.next-page.lore", List.of(
+        config.set("gui.items.next-page.lore", java.util.Arrays.asList(
             "",
             "&7Page {current_page} of {total_pages}",
             "",
@@ -352,7 +352,7 @@ public class ConfigManager {
         
         config.set("gui.items.previous-page.material", "PAPER");
         config.set("gui.items.previous-page.name", "&c&lPrevious Page");
-        config.set("gui.items.previous-page.lore", List.of(
+        config.set("gui.items.previous-page.lore", java.util.Arrays.asList(
             "",
             "&7Page {current_page} of {total_pages}",
             "",
@@ -362,7 +362,7 @@ public class ConfigManager {
         
         config.set("gui.items.close.material", "BARRIER");
         config.set("gui.items.close.name", "&c&lClose");
-        config.set("gui.items.close.lore", List.of(
+        config.set("gui.items.close.lore", java.util.Arrays.asList(
             "",
             "&7Close this menu",
             "",
@@ -373,7 +373,7 @@ public class ConfigManager {
         // Decorative items
         config.set("gui.items.filler.material", "GRAY_STAINED_GLASS_PANE");
         config.set("gui.items.filler.name", " ");
-        config.set("gui.items.filler.lore", List.of());
+        config.set("gui.items.filler.lore", java.util.Arrays.asList());
         
         // Order status items
         config.set("gui.items.order-active.material", "LIME_STAINED_GLASS");
@@ -461,7 +461,7 @@ public class ConfigManager {
         // Help messages
         config.set("messages.help-header", "&6&l=== DonutxOrders Help ===");
         config.set("messages.help-footer", "&6&l========================");
-        config.set("messages.help-commands", List.of(
+        config.set("messages.help-commands", java.util.Arrays.asList(
             "&e/order &7- Open the main order menu",
             "&e/order create &7- Create a new order",
             "&e/order list &7- View your orders",
@@ -478,7 +478,7 @@ public class ConfigManager {
         config.set("messages.discord.expired-order-description", "An order has expired!");
         
         // Placeholders help
-        config.set("messages.placeholders-info", List.of(
+        config.set("messages.placeholders-info", java.util.Arrays.asList(
             "&6Available placeholders:",
             "&e{player} &7- Player name",
             "&e{order_id} &7- Order ID",

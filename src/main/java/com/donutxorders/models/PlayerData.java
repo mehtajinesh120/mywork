@@ -15,6 +15,8 @@ import java.util.UUID;
  */
 public class PlayerData implements Serializable {
 
+    private java.util.List<String> notifications = new java.util.ArrayList<>();
+
     private UUID uuid;
     private int activeOrders;
     private int totalOrdersCreated;
@@ -23,6 +25,7 @@ public class PlayerData implements Serializable {
     private double totalMoneyEarned;
 
     public PlayerData(UUID uuid, int activeOrders, int totalOrdersCreated, int totalOrdersFulfilled, double totalMoneySpent, double totalMoneyEarned) {
+        this.notifications = new java.util.ArrayList<>();
         this.uuid = uuid;
         this.activeOrders = activeOrders;
         this.totalOrdersCreated = totalOrdersCreated;
@@ -152,5 +155,23 @@ public class PlayerData implements Serializable {
         } catch (Exception e) {
             plugin.getLogger().severe("Failed to load player data for " + uuid + ": " + e.getMessage());
         }
+    }
+
+    /**
+     * Adds a notification message to the player's notification list.
+     * @param notification The notification message to add.
+     */
+    public void addNotification(String notification) {
+        if (notification != null && !notification.isEmpty()) {
+            notifications.add(notification);
+        }
+    }
+
+    /**
+     * Gets the list of notifications for this player.
+     * @return List of notification messages.
+     */
+    public java.util.List<String> getNotifications() {
+        return notifications;
     }
 }

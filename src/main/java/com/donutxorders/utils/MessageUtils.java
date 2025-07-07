@@ -22,6 +22,11 @@ public class MessageUtils {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
+    // Alias for compatibility
+    public static String color(String message) {
+        return colorize(message);
+    }
+
     // Colorize a list of strings
     public static List<String> colorize(List<String> messages) {
         return messages.stream().map(MessageUtils::colorize).collect(Collectors.toList());

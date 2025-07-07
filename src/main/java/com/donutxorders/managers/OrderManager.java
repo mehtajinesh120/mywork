@@ -193,6 +193,34 @@ public class OrderManager {
 
     // Additional utility methods as needed
 
+    /**
+     * Returns all active (not expired or cancelled) orders.
+     */
+    public List<Order> getAllActiveOrders() {
+        List<Order> allOrders = databaseManager.getAllOrders();
+        List<Order> active = new ArrayList<>();
+        for (Order order : allOrders) {
+            if (order.getStatus() == OrderStatus.PENDING || order.getStatus() == OrderStatus.IN_PROGRESS) {
+                active.add(order);
+            }
+        }
+        return active;
+    }
+
+    /**
+     * Updates an order in the database.
+     */
+    public boolean updateOrder(Order order) {
+        return databaseManager.updateOrderSync(order);
+    }
+
+    /**
+     * Removes an order by its ID.
+     */
+    public boolean removeOrder(int orderId) {
+        return databaseManager.deleteOrderSync(String.valueOf(orderId));
+    }
+
     // --- ADDED: Stub methods to fix compilation errors ---
     public void saveAllData() {
         // TODO: Implement saving all data

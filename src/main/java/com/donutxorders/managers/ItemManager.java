@@ -22,7 +22,7 @@ public class ItemManager {
         if (metaA != null && metaB != null) {
             if (metaA.hasCustomModelData() != metaB.hasCustomModelData()) return false;
             if (metaA.hasCustomModelData() && metaB.hasCustomModelData()) {
-                if (!metaA.getCustomModelData().equals(metaB.getCustomModelData())) return false;
+                if (metaA.getCustomModelData() != metaB.getCustomModelData()) return false;
             }
         } else if (metaA != null || metaB != null) {
             return false;

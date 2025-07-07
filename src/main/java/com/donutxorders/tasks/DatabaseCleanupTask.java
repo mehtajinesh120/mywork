@@ -37,15 +37,17 @@ public class DatabaseCleanupTask extends BukkitRunnable {
      */
     public void cleanupDatabase() {
         long cutoff = System.currentTimeMillis() - retentionMillis;
-        int removed = databaseManager.removeOldOrders(cutoff);
-        logger.info("[DonutxOrders] Database cleanup: removed " + removed + " old orders (older than " + (retentionMillis / (24 * 60 * 60 * 1000)) + " days).");
+        // TODO: Implement removeOldOrders in DatabaseManager
+        // int removed = databaseManager.removeOldOrders(cutoff);
+        // logger.info("[DonutxOrders] Database cleanup: removed " + removed + " old orders (older than " + (retentionMillis / (24 * 60 * 60 * 1000)) + " days).");
     }
 
     /**
      * Optimizes database tables for better performance.
      */
     public void optimizeDatabase() {
-        databaseManager.optimizeTables();
-        logger.info("[DonutxOrders] Database optimization completed.");
+        // TODO: Implement optimizeTables in DatabaseManager
+        // databaseManager.optimizeTables();
+        // logger.info("[DonutxOrders] Database optimization completed.");
     }
 }

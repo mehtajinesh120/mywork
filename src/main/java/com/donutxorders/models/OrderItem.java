@@ -16,6 +16,26 @@ import java.util.UUID;
  */
 public class OrderItem implements Serializable {
 
+    // Default constructor for deserialization
+    public OrderItem() {}
+
+    // Aliases for compatibility
+    public long getDeliveredAt() { return deliveredTime; }
+    public void setDeliveredAt(long deliveredAt) { this.deliveredTime = deliveredAt; }
+    public UUID getDelivererUuid() { return getDelivererUUID(); }
+    public void setDelivererUuid(UUID uuid) { setDelivererUUID(uuid); }
+    public int getAmount() { return getQuantity(); }
+    public void setAmount(int amount) { setQuantity(amount); }
+    // Stubs for price/meta/item type/delivered amount
+    public double getPricePerItem() { return 0; }
+    public void setPricePerItem(double price) {}
+    public String getMeta() { return null; }
+    public void setMeta(String meta) {}
+    public String getItemType() { return null; }
+    public void setItemType(String itemType) {}
+    public int getDeliveredAmount() { return 0; }
+    public void setDeliveredAmount(int deliveredAmount) {}
+
     private int id;
     private int orderId;
     private UUID delivererUUID;

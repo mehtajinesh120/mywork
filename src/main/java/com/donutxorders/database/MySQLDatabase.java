@@ -1,4 +1,8 @@
-package com.donutxorders.database.impl;
+package com.donutxorders.database;
+
+import com.donutxorders.models.Order;
+import com.donutxorders.models.OrderItem;
+import com.donutxorders.models.OrderStatus;
 
 import com.donutxorders.core.DonutxOrders;
 import com.donutxorders.database.DatabaseManager;
@@ -14,6 +18,78 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 public class MySQLDatabase extends DatabaseManager {
+
+    @Override
+    public List<Order> getAllOrders() {
+        List<Order> orders = new ArrayList<>();
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(getSelectAllOrdersSQL());
+             ResultSet rs = statement.executeQuery()) {
+            while (rs.next()) {
+                Order order = mapResultSetToOrder(rs);
+                orders.add(order);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return orders;
+    }
+
+    private Order mapResultSetToOrder(ResultSet rs) throws SQLException {
+        // Map the ResultSet to an Order object. Adjust as needed for your schema.
+        String id = rs.getString("id");
+        UUID playerUuid = UUID.fromString(rs.getString("player_uuid"));
+        OrderStatus status = OrderStatus.valueOf(rs.getString("status"));
+        long createdAt = rs.getLong("created_at");
+        long expiresAt = rs.getLong("expires_at");
+        String world = rs.getString("world");
+        double x = rs.getDouble("x");
+        double y = rs.getDouble("y");
+        double z = rs.getDouble("z");
+        double fee = rs.getDouble("fee");
+        double totalPrice = rs.getDouble("total_price");
+        String description = rs.getString("description");
+        // You may need to adjust this constructor based on your Order class
+        return new Order(id, playerUuid, status, createdAt, expiresAt, world, x, y, z, fee, totalPrice, description);
+    }
+
+
+    @Override
+public boolean updateOrderSync(Order order) {
+    try (Connection connection = getConnection();
+         PreparedStatement statement = connection.prepareStatement(getUpdateOrderSQL())) {
+        statement.setString(1, order.getStatus().name());
+        if (order.getExpiresAt() > 0) {
+            statement.setLong(2, order.getExpiresAt());
+        } else {
+            statement.setNull(2, java.sql.Types.BIGINT);
+        }
+        statement.setDouble(3, order.getFee());
+        statement.setDouble(4, order.getTotalPrice());
+        statement.setString(5, order.getDescription());
+        statement.setString(6, String.valueOf(order.getId()));
+        int rows = statement.executeUpdate();
+        return rows > 0;
+    } catch (Exception e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+
+
+    @Override
+public boolean deleteOrderSync(String orderId) {
+    try (Connection connection = getConnection();
+         PreparedStatement statement = connection.prepareStatement(getDeleteOrderSQL())) {
+        statement.setString(1, orderId);
+        int rows = statement.executeUpdate();
+        return rows > 0;
+    } catch (Exception e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+
 
     public MySQLDatabase(DonutxOrders plugin) {
         super(plugin);
@@ -165,11 +241,11 @@ public class MySQLDatabase extends DatabaseManager {
     @Override
     protected void insertOrder(Connection connection, Order order) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(getInsertOrderSQL())) {
-            statement.setString(1, order.getId());
+            statement.setInt(1, order.getId());
             statement.setString(2, order.getPlayerUuid().toString());
             statement.setString(3, order.getStatus().name());
             statement.setLong(4, order.getCreatedAt());
-            if (order.getExpiresAt() != null) {
+            if (order.getExpiresAt() > 0) {
                 statement.setLong(5, order.getExpiresAt());
             } else {
                 statement.setNull(5, Types.BIGINT);
@@ -189,7 +265,7 @@ public class MySQLDatabase extends DatabaseManager {
     protected void insertOrderItems(Connection connection, Order order) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(getInsertOrderItemSQL())) {
             for (OrderItem item : order.getItems()) {
-                statement.setString(1, order.getId());
+                statement.setInt(1, order.getId());
                 statement.setString(2, item.getItemType());
                 statement.setInt(3, item.getAmount());
                 statement.setDouble(4, item.getPricePerItem());
@@ -199,7 +275,7 @@ public class MySQLDatabase extends DatabaseManager {
                 } else {
                     statement.setNull(6, Types.VARCHAR);
                 }
-                if (item.getDeliveredAt() != null) {
+                if (item.getDeliveredAt() > 0) {
                     statement.setLong(7, item.getDeliveredAt());
                 } else {
                     statement.setNull(7, Types.BIGINT);
@@ -248,7 +324,7 @@ public class MySQLDatabase extends DatabaseManager {
     protected void updateOrderInDatabase(Connection connection, Order order) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(getUpdateOrderSQL())) {
             statement.setString(1, order.getStatus().name());
-            if (order.getExpiresAt() != null) {
+            if (order.getExpiresAt() > 0) {
                 statement.setLong(2, order.getExpiresAt());
             } else {
                 statement.setNull(2, Types.BIGINT);
@@ -256,7 +332,7 @@ public class MySQLDatabase extends DatabaseManager {
             statement.setDouble(3, order.getFee());
             statement.setDouble(4, order.getTotalPrice());
             statement.setString(5, order.getDescription());
-            statement.setString(6, order.getId());
+            statement.setInt(6, order.getId());
             statement.executeUpdate();
         }
     }
@@ -373,13 +449,13 @@ public class MySQLDatabase extends DatabaseManager {
 
     private Order createOrderFromResultSet(ResultSet resultSet) throws SQLException {
         Order order = new Order();
-        order.setId(resultSet.getString("id"));
+        order.setId(resultSet.getInt("id"));
         order.setPlayerUuid(UUID.fromString(resultSet.getString("player_uuid")));
         order.setStatus(OrderStatus.valueOf(resultSet.getString("status")));
         order.setCreatedAt(resultSet.getLong("created_at"));
         
         long expiresAt = resultSet.getLong("expires_at");
-        if (!resultSet.wasNull()) {
+        if (!resultSet.wasNull() && expiresAt > 0) {
             order.setExpiresAt(expiresAt);
         }
         
@@ -396,7 +472,7 @@ public class MySQLDatabase extends DatabaseManager {
 
     private void loadOrderItems(Connection connection, Order order) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(getSelectOrderItemsSQL())) {
-            statement.setString(1, order.getId());
+            statement.setInt(1, order.getId());
             
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {

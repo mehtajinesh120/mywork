@@ -6,6 +6,7 @@ import com.donutxorders.database.DatabaseManager;
 import com.donutxorders.listeners.InventoryClickListener;
 import com.donutxorders.listeners.PlayerListener;
 import com.donutxorders.managers.EconomyManager;
+import com.donutxorders.managers.ItemManager;
 import com.donutxorders.managers.OrderManager;
 import com.donutxorders.managers.PermissionManager;
 import com.donutxorders.tasks.DatabaseCleanupTask;
@@ -30,6 +31,7 @@ public class DonutxOrders extends JavaPlugin {
     private EconomyManager economyManager;
     private PermissionManager permissionManager;
     private OrderManager orderManager;
+    private ItemManager itemManager;
     
     // Tasks
     private BukkitTask orderExpirationTask;
@@ -37,15 +39,21 @@ public class DonutxOrders extends JavaPlugin {
     
     // Plugin state
     private boolean isEnabled = false;
-    private boolean isFolia = false;
+
+    // Player data manager (added for compatibility)
+    private com.donutxorders.managers.PlayerDataManager playerDataManager;
+
+    public com.donutxorders.managers.PlayerDataManager getPlayerDataManager() {
+        return playerDataManager;
+    }
     
     @Override
     public void onEnable() {
+        // Initialize player data manager
+        playerDataManager = new com.donutxorders.managers.PlayerDataManager();
         long startTime = System.currentTimeMillis();
         
-        // Check if running on Folia
-        checkFoliaCompatibility();
-        
+
         // Initialize configuration
         if (!initializeConfiguration()) {
             getLogger().severe("Failed to initialize configuration! Disabling plugin...");
@@ -82,9 +90,7 @@ public class DonutxOrders extends JavaPlugin {
         long loadTime = System.currentTimeMillis() - startTime;
         getLogger().info(ChatColor.GREEN + "DonutxOrders has been enabled successfully! (Loaded in " + loadTime + "ms)");
         
-        if (isFolia) {
-            getLogger().info(ChatColor.YELLOW + "Folia server detected - Using compatible task scheduling");
-        }
+
     }
     
     @Override
@@ -124,15 +130,7 @@ public class DonutxOrders extends JavaPlugin {
         getLogger().info("DonutxOrders has been disabled successfully!");
     }
     
-    private void checkFoliaCompatibility() {
-        try {
-            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
-            isFolia = true;
-            getLogger().info("Folia server detected - Enabling compatibility mode");
-        } catch (ClassNotFoundException e) {
-            isFolia = false;
-        }
-    }
+
     
     private boolean initializeConfiguration() {
         try {
@@ -174,12 +172,14 @@ public class DonutxOrders extends JavaPlugin {
         try {
             // Initialize Economy Manager
             economyManager = new EconomyManager(this);
-            if (!economyManager.initialize()) {
-                getLogger().warning("Economy manager failed to initialize - Economy features will be disabled");
-            }
+            economyManager.initialize(); // Initialization logic handled inside EconomyManager
+// If you want to handle failure, modify EconomyManager.initialize() to return a boolean.
             
             // Initialize Permission Manager
             permissionManager = new PermissionManager(this);
+
+            // Initialize Item Manager
+            itemManager = new com.donutxorders.managers.ItemManager();
             
             // Initialize Order Manager
             orderManager = new OrderManager(this);
@@ -218,50 +218,25 @@ public class DonutxOrders extends JavaPlugin {
     
     private void startBackgroundTasks() {
         if (configManager == null) return;
-        
         try {
             // Order expiration task
             int expirationInterval = configManager.getConfig().getInt("tasks.order-expiration-interval", 600); // 10 minutes default
-            
-            if (isFolia) {
-                // Use Folia-compatible global scheduler
-                orderExpirationTask = Bukkit.getGlobalRegionScheduler().runAtFixedRate(
-                    this,
-                    (task) -> new OrderExpirationTask(this).run(),
-                    expirationInterval * 20L, // Convert to ticks
-                    expirationInterval * 20L
-                );
-            } else {
-                // Use traditional Bukkit scheduler
-                orderExpirationTask = new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        new OrderExpirationTask(DonutxOrders.this).run();
-                    }
-                }.runTaskTimerAsynchronously(this, expirationInterval * 20L, expirationInterval * 20L);
-            }
-            
+            orderExpirationTask = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    new OrderExpirationTask(DonutxOrders.this).run();
+                }
+            }.runTaskTimerAsynchronously(this, expirationInterval * 20L, expirationInterval * 20L);
+
             // Database cleanup task
             int cleanupInterval = configManager.getConfig().getInt("tasks.database-cleanup-interval", 86400); // 24 hours default
-            
-            if (isFolia) {
-                // Use Folia-compatible global scheduler
-                databaseCleanupTask = Bukkit.getGlobalRegionScheduler().runAtFixedRate(
-                    this,
-                    (task) -> new DatabaseCleanupTask(this).run(),
-                    cleanupInterval * 20L,
-                    cleanupInterval * 20L
-                );
-            } else {
-                // Use traditional Bukkit scheduler
-                databaseCleanupTask = new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        new DatabaseCleanupTask(DonutxOrders.this).run();
-                    }
-                }.runTaskTimerAsynchronously(this, cleanupInterval * 20L, cleanupInterval * 20L);
-            }
-            
+            databaseCleanupTask = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    new DatabaseCleanupTask(DonutxOrders.this).run();
+                }
+            }.runTaskTimerAsynchronously(this, cleanupInterval * 20L, cleanupInterval * 20L);
+
             getLogger().info("Background tasks started successfully");
         } catch (Exception e) {
             getLogger().log(Level.WARNING, "Failed to start some background tasks", e);
@@ -369,66 +344,49 @@ public class DonutxOrders extends JavaPlugin {
     public OrderManager getOrderManager() {
         return orderManager;
     }
-    
-    public boolean isFoliaServer() {
-        return isFolia;
+
+    public ItemManager getItemManager() {
+        return itemManager;
     }
     
+
     public boolean isPluginEnabled() {
         return isEnabled;
     }
     
     /**
-     * Get a safe scheduler for cross-platform compatibility
+     * Run a task asynchronously using the Bukkit scheduler
      */
     public void runTaskAsync(Runnable task) {
-        if (isFolia) {
-            // Use Folia's async scheduler
-            Bukkit.getAsyncScheduler().runNow(this, (scheduledTask) -> task.run());
-        } else {
-            // Use traditional Bukkit scheduler
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    task.run();
-                }
-            }.runTaskAsynchronously(this);
-        }
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                task.run();
+            }
+        }.runTaskAsynchronously(this);
     }
-    
+
     /**
-     * Run a task on the main thread (or appropriate thread for Folia)
+     * Run a task on the main server thread using the Bukkit scheduler
      */
     public void runTask(Runnable task) {
-        if (isFolia) {
-            // Use Folia's global scheduler for non-world-specific tasks
-            Bukkit.getGlobalRegionScheduler().run(this, (scheduledTask) -> task.run());
-        } else {
-            // Use traditional Bukkit scheduler
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    task.run();
-                }
-            }.runTask(this);
-        }
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                task.run();
+            }
+        }.runTask(this);
     }
-    
+
     /**
-     * Schedule a delayed task
+     * Schedule a delayed task using the Bukkit scheduler
      */
     public BukkitTask runTaskLater(Runnable task, long delay) {
-        if (isFolia) {
-            // Use Folia's global scheduler
-            return Bukkit.getGlobalRegionScheduler().runDelayed(this, (scheduledTask) -> task.run(), delay);
-        } else {
-            // Use traditional Bukkit scheduler
-            return new BukkitRunnable() {
-                @Override
-                public void run() {
-                    task.run();
-                }
-            }.runTaskLater(this, delay);
-        }
+        return new BukkitRunnable() {
+            @Override
+            public void run() {
+                task.run();
+            }
+        }.runTaskLater(this, delay);
     }
 }

@@ -4,6 +4,7 @@ import com.donutxorders.core.DonutxOrders;
 import com.donutxorders.managers.OrderManager;
 import com.donutxorders.managers.EconomyManager;
 import com.donutxorders.models.Order;
+import com.donutxorders.models.OrderStatus;
 import com.donutxorders.models.PlayerData;
 import com.donutxorders.utils.MessageUtils;
 import com.donutxorders.utils.TimeUtils;
@@ -56,7 +57,7 @@ public class OrderExpirationTask extends BukkitRunnable {
      * Determines if an order is expired.
      */
     private boolean isExpired(Order order, long now) {
-        return order.getStatus() == Order.Status.PENDING
+        return order.getStatus() == OrderStatus.PENDING
                 && (now - order.getCreatedAt()) >= expirationMillis;
     }
 
@@ -70,7 +71,7 @@ public class OrderExpirationTask extends BukkitRunnable {
         boolean refunded = economyManager.deposit(playerId, refundAmount);
 
         // Update order status and database
-        order.setStatus(Order.Status.EXPIRED);
+        order.setStatus(OrderStatus.EXPIRED);
         orderManager.updateOrder(order);
         orderManager.removeOrder(order.getOrderId());
 

@@ -6,11 +6,30 @@ import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
+import com.donutxorders.models.OrderStatus;
 
 /**
  * Represents an order in DonutxOrders.
  */
 public class Order implements Serializable {
+
+    // Default constructor for deserialization
+    public Order() {}
+
+    // Aliases for compatibility
+    public long getCreatedAt() { return createdTime; }
+    public void setCreatedAt(long createdAt) { this.createdTime = createdAt; }
+    public int getOrderId() { return getId(); }
+    public void setPlayerUuid(UUID uuid) { setCreatorUUID(uuid); }
+    public UUID getPlayerId() { return getCreatorUUID(); }
+    public int getAmount() { return getQuantity(); }
+    public void setAmount(int amount) { setQuantity(amount); }
+
+    // Stubs for meta/item type
+    public String getMeta() { return null; }
+    public void setMeta(String meta) {}
+    public String getItemType() { return null; }
+    public void setItemType(String itemType) {}
 
     private int id;
     private UUID creatorUUID;

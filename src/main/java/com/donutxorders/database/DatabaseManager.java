@@ -1,8 +1,7 @@
 package com.donutxorders.database;
 
 import com.donutxorders.core.DonutxOrders;
-import com.donutxorders.database.impl.MySQLDatabase;
-import com.donutxorders.database.impl.SQLiteDatabase;
+
 import com.donutxorders.models.Order;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -18,6 +17,10 @@ import java.util.logging.Level;
 
 public abstract class DatabaseManager {
     
+    public abstract java.util.List<com.donutxorders.models.Order> getAllOrders();
+    public abstract boolean updateOrderSync(com.donutxorders.models.Order order);
+    public abstract boolean deleteOrderSync(String orderId);
+
     protected final DonutxOrders plugin;
     protected final FileConfiguration config;
     protected HikariDataSource dataSource;
@@ -444,7 +447,7 @@ public abstract class DatabaseManager {
                     updateOrderInDatabase(connection, order);
                     
                     // Delete existing items
-                    deleteOrderItemsFromDatabase(connection, order.getId());
+                    deleteOrderItemsFromDatabase(connection, String.valueOf(order.getId()));
                     
                     // Insert updated items
                     insertOrderItems(connection, order);

@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.logging.Level;
+import java.util.UUID;
 
 public class EconomyManager {
 
@@ -50,6 +51,20 @@ public class EconomyManager {
     public boolean hasBalance(OfflinePlayer player, double amount) {
         if (economy == null) return false;
         return economy.has(player, amount);
+    }
+
+    /**
+     * Deposits money to a player by UUID.
+     */
+    public boolean deposit(UUID uuid, double amount) {
+        if (economy == null) {
+            plugin.getLogger().warning("Economy not available for deposit.");
+            return false;
+        }
+        OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+        if (amount < 0) return false;
+        EconomyResponse response = economy.depositPlayer(player, amount);
+        return response.transactionSuccess();
     }
 
     public boolean withdrawMoney(OfflinePlayer player, double amount) {
