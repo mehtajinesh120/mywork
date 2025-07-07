@@ -27,7 +27,7 @@ public class SQLiteDatabase extends DatabaseManager {
              PreparedStatement statement = connection.prepareStatement(getSelectAllOrdersSQL());
              ResultSet rs = statement.executeQuery()) {
             while (rs.next()) {
-                Order order = mapResultSetToOrder(rs);
+                Order order = Order.fromResultSet(rs, null);
                 orders.add(order);
             }
         } catch (Exception e) {
@@ -36,23 +36,7 @@ public class SQLiteDatabase extends DatabaseManager {
         return orders;
     }
 
-    private Order mapResultSetToOrder(ResultSet rs) throws SQLException {
-        // Map the ResultSet to an Order object. Adjust as needed for your schema.
-        String id = rs.getString("id");
-        UUID playerUuid = UUID.fromString(rs.getString("player_uuid"));
-        OrderStatus status = OrderStatus.valueOf(rs.getString("status"));
-        long createdAt = rs.getLong("created_at");
-        long expiresAt = rs.getLong("expires_at");
-        String world = rs.getString("world");
-        double x = rs.getDouble("x");
-        double y = rs.getDouble("y");
-        double z = rs.getDouble("z");
-        double fee = rs.getDouble("fee");
-        double totalPrice = rs.getDouble("total_price");
-        String description = rs.getString("description");
-        // You may need to adjust this constructor based on your Order class
-        return new Order(id, playerUuid, status, createdAt, expiresAt, world, x, y, z, fee, totalPrice, description);
-    }
+    
 
 
     @Override
