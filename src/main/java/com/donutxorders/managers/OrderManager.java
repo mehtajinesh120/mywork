@@ -4,6 +4,12 @@ import com.donutxorders.core.DonutxOrders;
 import com.donutxorders.database.DatabaseManager;
 import com.donutxorders.models.Order;
 import com.donutxorders.models.OrderItem;
+import com.donutxorders.gui.MainOrderGUI;
+import com.donutxorders.gui.DeliveryGUI;
+import com.donutxorders.gui.YourOrdersGUI;
+import com.donutxorders.gui.NewOrderGUI;
+import com.donutxorders.gui.ItemSelectionGUI;
+import com.donutxorders.gui.SearchGUI;
 import com.donutxorders.models.OrderStatus;
 import com.donutxorders.models.PlayerData;
 import org.bukkit.Bukkit;
@@ -19,6 +25,12 @@ public class OrderManager {
 
     private final DonutxOrders plugin;
     private final DatabaseManager databaseManager;
+    private MainOrderGUI mainOrderGUI;
+private DeliveryGUI deliveryGUI;
+private YourOrdersGUI yourOrdersGUI;
+private NewOrderGUI newOrderGUI;
+private ItemSelectionGUI itemSelectionGUI;
+private SearchGUI searchGUI;
 
     public OrderManager(DonutxOrders plugin) {
         this.plugin = plugin;
@@ -233,11 +245,41 @@ public class OrderManager {
     }
 
     // GUI accessors (stubs)
-    public Object getMainOrderGUI() { throw new UnsupportedOperationException("Not implemented"); }
-    public Object getDeliveryGUI() { throw new UnsupportedOperationException("Not implemented"); }
-    public Object getYourOrdersGUI() { throw new UnsupportedOperationException("Not implemented"); }
-    public Object getNewOrderGUI() { throw new UnsupportedOperationException("Not implemented"); }
-    public Object getItemSelectionGUI() { throw new UnsupportedOperationException("Not implemented"); }
-    public Object getSearchGUI() { throw new UnsupportedOperationException("Not implemented"); }
+    public MainOrderGUI getMainOrderGUI() {
+    if (mainOrderGUI == null) {
+        mainOrderGUI = new com.donutxorders.gui.MainOrderGUI(plugin);
+    }
+    return mainOrderGUI;
+}
+    public DeliveryGUI getDeliveryGUI() {
+        if (deliveryGUI == null) {
+            deliveryGUI = new DeliveryGUI(plugin);
+        }
+        return deliveryGUI;
+    }
+    public YourOrdersGUI getYourOrdersGUI() {
+        if (yourOrdersGUI == null) {
+            yourOrdersGUI = new YourOrdersGUI(plugin);
+        }
+        return yourOrdersGUI;
+    }
+    public NewOrderGUI getNewOrderGUI() {
+        if (newOrderGUI == null) {
+            newOrderGUI = new NewOrderGUI(plugin);
+        }
+        return newOrderGUI;
+    }
+    public ItemSelectionGUI getItemSelectionGUI() {
+        if (itemSelectionGUI == null) {
+            itemSelectionGUI = new ItemSelectionGUI(plugin);
+        }
+        return itemSelectionGUI;
+    }
+    public SearchGUI getSearchGUI() {
+        if (searchGUI == null) {
+            searchGUI = new SearchGUI(plugin);
+        }
+        return searchGUI;
+    }
 
 }
